@@ -1,0 +1,522 @@
+---
+title: "Manage Data Connectors"
+description: "Learn how to create, list, and delete AWS S3 and GCP GCS data connector credentials using the Labellerr Python SDK."
+icon: plug
+---
+
+## Introduction
+
+<Card title="What are Data Connectors?" icon="circle-info">
+A **data connector** in Labellerr is a saved set of cloud storage **credentials** (for AWS S3 or Google Cloud Storage) that authorises Labellerr to securely access your bucket, without storing or moving credentials manually on every operation.
+
+Connectors are reusable, once a connector credential is saved, it can be used across multiple datasets and projects. The SDK provides full lifecycle management:
+
+- **Create** connector credentials for AWS S3 or GCP GCS
+- **Test** connector credentials before saving them
+- **List** all existing connector credentials by provider and type
+- **Delete** connector credentials that are no longer needed
+
+### Connector Types
+
+| Type | Enum Value | Description |
+|------|-----------|-------------|
+| Import | `ConnectionType._IMPORT` | Pull files from cloud storage into Labellerr |
+| Export | `ConnectionType._EXPORT` | Push annotation results back to cloud storage |
+
+### Provider Types
+
+| Provider | Enum Value | Description |
+|----------|-----------|-------------|
+| AWS S3 | `ConnectorType._S3` | Amazon Simple Storage Service |
+| GCP GCS | `ConnectorType._GCS` | Google Cloud Storage |
+</Card>
+
+---
+
+## Required Imports
+
+```python Required Imports lines icon="code"
+from labellerr.client import LabellerrClient
+from labellerr.core.schemas import (
+    ConnectionType,
+    ConnectorType,
+    AWSConnectionParams,
+    AWSConnectionTestParams,
+    GCSConnectionParams,
+    GCSConnectionTestParams
+)
+from labellerr.core.connectors import (
+    LabellerrS3Connection,
+    LabellerrGCSConnection,
+    list_connections,
+    delete_connection
+)
+from labellerr.core.exceptions import LabellerrError
+```
+
+---
+
+## Connect to AWS S3
+
+<Card title="Connect AWS S3 Bucket" icon="aws">
+Use `LabellerrS3Connection` to create a connection to your Amazon S3 bucket. It is strongly recommended to **test the connection first** before saving it to ensure your IAM credentials and path are valid.
+
+<Steps>
+  <Step title="Initialize the Client">
+    Create a `LabellerrClient` instance with your API credentials.
+  </Step>
+  <Step title="Test the Connection (Recommended)">
+    Call `LabellerrS3Connection.test_connection()` with a specific S3 path to validate credentials and permissions.
+  </Step>
+  <Step title="Create the Connection">
+    Call `LabellerrS3Connection.create_connection()` to persist the connection for future use.
+  </Step>
+</Steps>
+
+```python Connect to AWS S3 lines icon="aws"
+from labellerr.client import LabellerrClient
+from labellerr.core.connectors import LabellerrS3Connection
+from labellerr.core.schemas import AWSConnectionParams, AWSConnectionTestParams, ConnectionType
+from labellerr.core.exceptions import LabellerrError
+
+# Initialize the client with your API credentials
+client = LabellerrClient(
+    api_key='your_api_key',
+    api_secret='your_api_secret',
+    client_id='your_client_id'
+)
+
+try:
+    # Step 1: Test the connection first (recommended)
+    test_params = AWSConnectionTestParams(
+        aws_access_key="your_aws_access_key",
+        aws_secrets_key="your_aws_secret_key",
+        path="s3://your-bucket-name/path/to/data/",
+        data_type="image",
+        connection_type="import"
+    )
+
+    test_result = LabellerrS3Connection.test_connection(client, test_params)
+    print(f"✓ Connection test result: {test_result}")
+
+    # Step 2: Create the connection
+    connection_params = AWSConnectionParams(
+        aws_access_key="your_aws_access_key",
+        aws_secrets_key="your_aws_secret_key",
+        path="s3://your-bucket-name/path/to/data/",
+        data_type="image",
+        connection_type=ConnectionType._IMPORT,
+        name="My S3 Import Connection",
+        description="Production AWS S3 bucket for image datasets"
+    )
+
+    s3_connection = LabellerrS3Connection.create_connection(client, connection_params)
+
+    # Print connection details
+    print(f"✓ S3 Connection created successfully!")
+    print(f"  Connection ID   : {s3_connection.connection_id}")
+    print(f"  Connection Name : {s3_connection.name}")
+    print(f"  Provider        : AWS S3")
+    print(f"  Type            : Import")
+    print(f"  Path            : s3://your-bucket-name/path/to/data/")
+
+except LabellerrError as e:
+    print(f"✗ Connection failed: {str(e)}")
+```
+
+<Warning>
+**Required IAM Permissions for AWS S3**
+
+Your IAM user must have the following permissions on the target bucket:
+
+| Use Case | Required Permissions |
+|----------|---------------------|
+| Import (read data) | `s3:GetObject`, `s3:ListBucket`, `s3:GetBucketCors(Optional)`, `s3:GetBucketLocation`, `s3:PutBucketCors(Optional)` |
+| Export (write results) | All import permissions + `s3:PutObject`, `s3:DeleteObject` |
+
+For a step-by-step IAM setup guide, see [Connect AWS S3](/getting-started/connect-aws-s3).
+</Warning>
+
+<Note>
+**S3 Path Format:** Always use the `s3://bucket-name/folder/subfolder/` format. Include a trailing slash for folder paths.
+</Note>
+</Card>
+
+---
+
+## Connect to GCP (Google Cloud Storage)
+
+<Card title="Connect GCP GCS Bucket" icon="google">
+Use `LabellerrGCSConnection` to create a connection to your Google Cloud Storage bucket. You will need a **service account JSON key file** with the appropriate permissions.
+
+<Steps>
+  <Step title="Initialize the Client">
+    Create a `LabellerrClient` instance with your API credentials.
+  </Step>
+  <Step title="Test the Connection (Recommended)">
+    Call `LabellerrGCSConnection.test_connection()` to validate your service account credentials and path access.
+  </Step>
+  <Step title="Create the Connection">
+    Call `LabellerrGCSConnection.create_connection()` to save the connection for future use.
+  </Step>
+</Steps>
+
+```python Connect to GCP GCS lines icon="google"
+from labellerr.client import LabellerrClient
+from labellerr.core.connectors import LabellerrGCSConnection
+from labellerr.core.schemas import GCSConnectionParams, GCSConnectionTestParams, ConnectionType
+from labellerr.core.exceptions import LabellerrError
+
+# Initialize the client with your API credentials
+client = LabellerrClient(
+    api_key='your_api_key',
+    api_secret='your_api_secret',
+    client_id='your_client_id'
+)
+
+try:
+    # Step 1: Test the connection first (recommended)
+    test_params = GCSConnectionTestParams(
+        svc_account_json="/path/to/service-account-key.json",
+        path="gs://your-bucket-name/path/to/data/",
+        data_type="image",
+        connection_type="import"
+    )
+
+    test_result = LabellerrGCSConnection.test_connection(client, test_params)
+    print(f"✓ Connection test result: {test_result}")
+
+    # Step 2: Create the connection
+    connection_params = GCSConnectionParams(
+        svc_account_json="/path/to/service-account-key.json",
+        path="gs://your-bucket-name/path/to/data/",
+        data_type="image",
+        connection_type=ConnectionType._IMPORT,
+        name="My GCS Import Connection",
+        description="Production GCS bucket for image datasets"
+    )
+
+    gcs_connection = LabellerrGCSConnection.create_connection(client, connection_params)
+
+    # Print connection details
+    print(f"✓ GCS Connection created successfully!")
+    print(f"  Connection ID   : {gcs_connection.connection_id}")
+    print(f"  Connection Name : {gcs_connection.name}")
+    print(f"  Provider        : Google Cloud Storage")
+    print(f"  Type            : Import")
+    print(f"  Path            : gs://your-bucket-name/path/to/data/")
+
+except LabellerrError as e:
+    print(f"✗ Connection failed: {str(e)}")
+```
+
+<Warning>
+**Required GCS Service Account Permissions**
+
+Your service account must have the following roles/permissions:
+
+| Use Case | Required Permissions |
+|----------|---------------------|
+| Import (read data) | `storage.objects.get`, `storage.objects.list`, `storage.buckets.get`, `storage.buckets.update(Optional)` |
+| Export (write results) | All import permissions + `storage.objects.create`, `storage.objects.delete` |
+
+For a step-by-step service account setup guide, see [Connect GCS](/getting-started/connect-gcs).
+</Warning>
+
+<Note>
+**GCS Path Format:** Always use the `gs://bucket-name/folder/subfolder/` format. Include a trailing slash for folder paths. Your service account JSON key file must be readable from the machine running the SDK.
+</Note>
+</Card>
+
+---
+
+## List Connections
+
+<Card title="List All Connections" icon="list">
+Use `list_connections()` to retrieve all saved connections for a given cloud provider and connection type. This is useful to inspect existing connections, find a connection ID to reuse, or audit what connections are configured.
+
+```python List Connections lines icon="list"
+from labellerr.client import LabellerrClient
+from labellerr.core.schemas import ConnectionType, ConnectorType
+from labellerr.core.connectors import list_connections
+from labellerr.core.exceptions import LabellerrError
+
+# Initialize the client with your API credentials
+client = LabellerrClient(
+    api_key='your_api_key',
+    api_secret='your_api_secret',
+    client_id='your_client_id'
+)
+
+try:
+    # List all S3 import connections
+    connections = list_connections(client, ConnectorType._S3, ConnectionType._IMPORT)
+
+    for conn in connections:
+        print(f"  Connection ID   : {conn.connection_id}")
+        print(f"  Connection Name : {conn.name}")
+        print(f"  Description     : {conn.description}")
+        print(f"  Provider        : {conn.connector_type}")
+        print(f"  Connection Type : {conn.connection_type}")
+        print(f"  Created At      : {conn.created_at}")
+        print("-" * 50)
+
+except LabellerrError as e:
+    print(f"✗ Failed to list connections: {str(e)}")
+```
+
+<Tip>
+You can filter connections by swapping `ConnectorType._S3` for `ConnectorType._GCS` to list GCS connections, and `ConnectionType._IMPORT` for `ConnectionType._EXPORT` to list export connections.
+</Tip>
+</Card>
+
+
+## Delete a Connection
+
+<Card title="Delete Connection" icon="trash">
+Use `delete_connection()` to permanently remove a saved connection by its connection ID. This is useful for cleaning up unused or outdated connections.
+
+```python Delete Connection lines icon="trash"
+from labellerr.client import LabellerrClient
+from labellerr.core.connectors import delete_connection
+from labellerr.core.exceptions import LabellerrError
+
+# Initialize the client with your API credentials
+client = LabellerrClient(
+    api_key='your_api_key',
+    api_secret='your_api_secret',
+    client_id='your_client_id'
+)
+
+# The connection ID you want to delete
+connection_id_to_delete = "your_connection_id_here"
+
+try:
+    response = delete_connection(client, connection_id=connection_id_to_delete)
+
+    print(f"✓ Connection deleted successfully!")
+    print(f"  Deleted Connection ID : {connection_id_to_delete}")
+    print(f"  Response              : {response}")
+
+except LabellerrError as e:
+    print(f"✗ Failed to delete connection: {str(e)}")
+```
+
+<Warning>
+**Caution:** Deleting a connection is **permanent**. Any datasets that were linked to this connection will lose access to the cloud storage path. Ensure no active datasets or projects depend on this connection before deleting.
+</Warning>
+</Card>
+
+
+
+## Error Handling
+
+<Card title="Best Practices for Error Handling" icon="shield">
+Always wrap connection operations in `try-except` blocks using `LabellerrError` to handle failures gracefully.
+
+```python Error Handling Example lines icon="exclamation-triangle"
+from labellerr.client import LabellerrClient
+from labellerr.core.connectors import LabellerrS3Connection, list_connections, delete_connection
+from labellerr.core.schemas import AWSConnectionParams, ConnectionType, ConnectorType
+from labellerr.core.exceptions import LabellerrError
+
+client = LabellerrClient(
+    api_key='your_api_key',
+    api_secret='your_api_secret',
+    client_id='your_client_id'
+)
+
+# Create connection with error handling
+try:
+    params = AWSConnectionParams(
+        aws_access_key="your_aws_access_key",
+        aws_secrets_key="your_aws_secret_key",
+        path="s3://your-bucket/data/",
+        data_type="image",
+        connection_type=ConnectionType._IMPORT,
+        name="My S3 Connection"
+    )
+    conn = LabellerrS3Connection.create_connection(client, params)
+    print(f"✓ Created: {conn.connection_id}")
+
+except LabellerrError as e:
+    print(f"✗ Create failed: {str(e)}")
+
+# List connections with error handling
+try:
+    connections = list_connections(client, ConnectorType._S3, ConnectionType._IMPORT)
+    for conn in connections:
+        print(f"  ID: {conn.connection_id}, Name: {conn.name}")
+
+except LabellerrError as e:
+    print(f"✗ List failed: {str(e)}")
+
+# Delete connection with error handling
+try:
+    response = delete_connection(client, connection_id="connection_id_to_delete")
+    print(f"✓ Deleted: {response}")
+
+except LabellerrError as e:
+    print(f"✗ Delete failed: {str(e)}")
+```
+</Card>
+
+---
+
+## API Reference
+
+<AccordionGroup>
+<Accordion title="LabellerrS3Connection.create_connection(client, params)" icon="aws">
+
+```python
+from labellerr.core.connectors import LabellerrS3Connection
+from labellerr.core.schemas import AWSConnectionParams
+
+connection = LabellerrS3Connection.create_connection(
+    client=client,
+    params=AWSConnectionParams(
+        aws_access_key="...",
+        aws_secrets_key="...",
+        path="s3://bucket/path/",
+        data_type="image",
+        connection_type=ConnectionType._IMPORT,
+        name="Connection Name",
+        description="Optional description"
+    )
+)
+```
+
+**Returns:** `LabellerrS3Connection` object with properties:
+- `connection_id: str` — Unique identifier for the connection
+- `name: str` — Display name of the connection
+- `description: str` — Optional description
+- `connector_type: str` — Always `"s3"` for S3 connections
+- `connection_type: str` — `"import"` or `"export"`
+- `created_at: datetime` — Timestamp of creation
+
+</Accordion>
+
+<Accordion title="LabellerrGCSConnection.create_connection(client, params)" icon="google">
+
+```python
+from labellerr.core.connectors import LabellerrGCSConnection
+from labellerr.core.schemas import GCSConnectionParams
+
+connection = LabellerrGCSConnection.create_connection(
+    client=client,
+    params=GCSConnectionParams(
+        svc_account_json="/path/to/service-account.json",
+        path="gs://bucket/path/",
+        data_type="image",
+        connection_type=ConnectionType._IMPORT,
+        name="Connection Name",
+        description="Optional description"
+    )
+)
+```
+
+**Returns:** `LabellerrGCSConnection` object with properties:
+- `connection_id: str` — Unique identifier for the connection
+- `name: str` — Display name of the connection
+- `description: str` — Optional description
+- `connector_type: str` — Always `"gcs"` for GCS connections
+- `connection_type: str` — `"import"` or `"export"`
+- `created_at: datetime` — Timestamp of creation
+
+</Accordion>
+
+<Accordion title="list_connections(client, connector, connection_type)" icon="list">
+
+```python
+from labellerr.core.connectors import list_connections
+from labellerr.core.schemas import ConnectorType, ConnectionType
+
+connections = list_connections(
+    client=client,
+    connector=ConnectorType._S3,        # or ConnectorType._GCS
+    connection_type=ConnectionType._IMPORT  # or ConnectionType._EXPORT
+)
+
+for conn in connections:
+    print(conn.connection_id)
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `client` | `LabellerrClient` | Authenticated client instance |
+| `connector` | `ConnectorType` | `ConnectorType._S3` or `ConnectorType._GCS` |
+| `connection_type` | `ConnectionType` | `ConnectionType._IMPORT` or `ConnectionType._EXPORT` |
+
+**Returns:** Iterable of connection objects, each with `connection_id`, `name`, `description`, `connector_type`, `connection_type`, `created_at`.
+
+</Accordion>
+
+<Accordion title="delete_connection(client, connection_id)" icon="trash">
+
+```python
+from labellerr.core.connectors import delete_connection
+
+response = delete_connection(
+    client=client,
+    connection_id="your_connection_id_here"
+)
+print(response)
+```
+
+**Parameters:**
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `client` | `LabellerrClient` | Authenticated client instance |
+| `connection_id` | `str` | ID of the connection to delete |
+
+**Returns:** Response object or confirmation message from the API.
+
+</Accordion>
+</AccordionGroup>
+
+---
+
+## Common Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Reuse Across Datasets" icon="recycle">
+    Create one S3 or GCS connection and use the same `connection_id` across multiple datasets, avoiding repeated credential entry.
+  </Card>
+
+  <Card title="Import Large Datasets" icon="cloud-arrow-down">
+    Connect directly to cloud storage buckets containing thousands of files, bypassing local upload limits (2,500 files / 2.5 GB).
+  </Card>
+
+  <Card title="Export Annotations" icon="cloud-arrow-up">
+    Create an export-type connection to automatically push completed annotation exports back to your S3 or GCS bucket.
+  </Card>
+
+  <Card title="Audit & Cleanup" icon="shield-check">
+    Use `list_connections()` periodically to audit all active connections and `delete_connection()` to remove unused ones.
+  </Card>
+</CardGroup>
+
+---
+
+## Related Documentation
+
+<CardGroup cols={3}>
+  <Card title="Create Datasets" icon="database" href="/sdk/create-dataset-sdk">
+    Use your connections to create datasets directly from cloud storage
+  </Card>
+
+  <Card title="Connect AWS S3" icon="aws" href="/getting-started/connect-aws-s3">
+    Step-by-step guide to configure AWS IAM permissions for S3
+  </Card>
+
+  <Card title="Connect GCS" icon="google" href="/getting-started/connect-gcs">
+    Step-by-step guide to configure a GCS service account
+  </Card>
+</CardGroup>
+
+<Note>
+For technical support, contact [support@tensormatics.com](mailto:support@tensormatics.com)
+</Note>

@@ -178,6 +178,7 @@
             "pages": [
               "sdk/getting-started",
               "sdk/create-dataset-sdk",
+              "sdk/manage-connections-sdk",
               "sdk/add-annotation-questions",
               "sdk/create-project-sdk",
               "sdk/retrieve-projects-datasets-sdk",
