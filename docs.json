@@ -144,6 +144,12 @@
             ]
           },
           {
+            "group": "System Requirements",
+            "pages": [
+              "system-requirements/system-requirements"
+            ]
+          },
+          {
             "group": "Additional Features",
             "pages": [
               {

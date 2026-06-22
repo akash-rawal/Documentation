@@ -1,0 +1,49 @@
+---
+title: "System Requirements"
+description: "Verify your hardware and network setup to ensure optimal performance during heavy data annotation workflows."
+icon: computer
+---
+
+To perform heavy data annotation smoothly on high-resolution video timeline tracking, and AI-assisted segmentation, your system should meet or exceed the following specifications.
+
+<CardGroup cols={2}>
+  <Card title="System Memory" icon="memory">
+    **Minimum 16 GB RAM**
+    
+    Required to cache high-resolution image sequences and run multi-instance models smoothly in the browser.
+  </Card>
+
+  <Card title="Processor (CPU)" icon="microchip">
+    **Intel i5 10th Gen** *(or Mac/Apple Silicon equivalent)*
+    
+    Ensures low-latency browser canvas rendering and fast calculations for polygon edits and AI predictions.
+  </Card>
+
+  <Card title="Web Browser" icon="chrome">
+    **Google Chrome Supported Only**
+    
+    Our canvas engine is optimized specifically for Chrome. Other browsers may experience interface lag or feature errors.
+  </Card>
+
+  <Card title="Network Speed" icon="wifi">
+    **Minimum 5 Mbps Bandwidth**
+    
+    Ensures seamless cloud dataset retrieval, pre-annotation injection, and fast export operations.
+  </Card>
+</CardGroup>
+
+---
+
+## Performance Recommendations for Heavy Annotation
+
+<Note>
+When working with long video sequences (100MB - 500MB) or dense datasets with hundreds of overlapping bounding boxes, hardware specs become critical to prevent browser tab crashes.
+</Note>
+
+### Why Chrome is Required?
+Labellerr leverages GPU-accelerated WebGL rendering. Google Chrome provides the most compliant and highly-optimized runtime for these features.
+
+### Recommended Environment Setup:
+- **Hardware Acceleration:** Ensure *Hardware Acceleration* is enabled in Chrome Settings (`chrome://settings/system`).
+- **Network Stability:** A wired ethernet connection or strong 5 GHz Wi-Fi is recommended to ensure continuous streaming of frames without buffering.
+- **Tab Management:** Close unnecessary browser tabs and resource-heavy background applications during intensive annotation runs.
