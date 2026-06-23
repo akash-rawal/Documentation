@@ -1,0 +1,133 @@
+---
+title: "June 2026 - Product Updates"
+description: "Introducing Master Control for event tagging and full SAM 3 support with visual, click, and text-based prompting."
+icon: "calendar-check"
+---
+
+At Labellerr, we continue to streamline data annotation pipelines to help AI teams annotate faster and with greater accuracy. This month, we are excited to release major improvements to video event tagging workflows and full integration of the Segment Anything Model 3 (SAM 3).
+
+Here’s what’s new.
+
+---
+
+## 1. Master Control Panel for Event Tagging Annotation
+
+<iframe
+  width="100%"
+  height="350"
+  src="https://www.youtube.com/embed/cdXCc9P0B7E"
+  title="Master Control for Event Tagging"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen>
+</iframe>
+
+Managing event annotations across video timelines can be challenging when events span multiple frames and require precise boundary adjustments. Labellerr’s new **Master Control for Event Tagging** provides a unified control panel at the frame level to simplify this process.
+
+**Key Capabilities:**
+- **Centralized Editing:** Update and modify event tagging annotations directly from a single interface.
+- **Boundary Precision:** Easily correct event boundaries by adjusting start and end frames.
+- **Keyframe Review:** Verify active events present in any selected video keyframe instantly.
+- **Reduced Navigation:** Review annotations without toggling between multiple screens.
+
+---
+
+## 2. Visual Prompt Auto-Labeling with SAM 3
+
+<iframe
+  width="100%"
+  height="350"
+  src="https://www.youtube.com/embed/kE_L99L0MlM"
+  title="Visual Prompt Auto-Labeling with SAM 3"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen>
+</iframe>
+
+With full support for **SAM 3 (Segment Anything Model 3)**, you can now use existing annotations as visual prompts to automatically segment similar objects across the same image.
+
+**How to Use:**
+1. Draw a bounding box or polygon annotation on a reference object.
+2. Select the annotation and press **I** on your keyboard.
+3. SAM 3 automatically identifies similar visual signatures and generates segmentation masks for all matching instances in the canvas.
+
+**Benefits:**
+- Saves hours of manual tracing on repetitive items (e.g., vehicles, shelf products, tools).
+- Ensures boundary and mask quality consistency.
+
+---
+
+## 3. One-Click Similar Object Annotation
+
+<iframe
+  width="100%"
+  height="350"
+  src="https://www.youtube.com/embed/hdm6-d3N4N4"
+  title="One-Click Similar Object Annotation"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen>
+</iframe>
+
+For even faster workflows, you can annotate all visually similar objects with a single click.
+
+**How to Use:**
+1. Select **SAM 3** from the model selection tab.
+2. Click directly on a target object in the image.
+3. The platform automatically detects, matches, and annotates all similar instances in a single step.
+
+**Benefits:**
+- Drastically speeds up dense scene labeling.
+- Minimizes annotator fatigue during large-scale instance segmentation.
+
+---
+
+## 4. Text Prompt Segmentation
+
+<iframe
+  width="100%"
+  height="350"
+  src="https://www.youtube.com/embed/9_pQmB7CU3I"
+  title="Text Prompt Segmentation"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  allowfullscreen>
+</iframe>
+
+SAM 3 now supports text-driven object annotation inside Labellerr, allowing you to label objects by typing their semantic name.
+
+**How to Use:**
+1. Select **SAM 3** and choose the **Text Prompt** option.
+2. Enter the name of the object category (e.g., *"dice"*, *"car"*, *"furniture"*).
+3. The platform automatically localizes and segments the target objects.
+
+**Benefits:**
+- Highly flexible for datasets with clearly defined semantic categories.
+- Eliminates manual clicking/drawing by relying on text-to-segmentation models.
+
+---
+
+## Why It Matters
+
+These updates focus on two key pillars of annotation efficiency:
+1. **Model-Assisted Speedup:** Leverage state-of-the-art zero-shot segmentation with SAM 3 to label multiple instances in seconds.
+2. **Centralized Video Controls:** Streamline temporal QA and event verification directly on the video timeline.
+
+Together, these enhancements help computer vision teams accelerate dataset creation while maintaining the highest quality standards.
+
+---
+
+## FAQs
+
+**Q1. How does the new Master Control help with video QA?**
+It displays all active events on a frame-by-frame basis in a centralized panel, allowing reviewers to correct temporal boundaries (start/end frames) and edit metadata without opening multiple side panels.
+
+**Q2. What is the keyboard shortcut to trigger visual prompt labeling?**
+Select an existing annotation and press **I** on your keyboard to trigger SAM 3 to find and segment similar objects in the image.
+
+**Q3. Can I use text prompt segmentation for custom objects?**
+Yes, SAM 3's zero-shot capabilities allow it to segment a wide variety of common and custom objects based on standard English names.
