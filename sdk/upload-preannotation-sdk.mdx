@@ -50,6 +50,121 @@ Mismatched file names will prevent annotations from being applied to the corresp
 </Warning>
 
 
+## Uploading Attributes with Pre-annotations
+
+Attributes (such as Radio, Dropdown, Select, Boolean, and Input fields attached to bounding boxes, polygons, or masks) can be included directly within the `coco_json` file structure.
+
+### JSON Schema / Structure Explanation
+
+Attributes are formatted inside each item of the `annotations` array:
+
+- **`attributes`** *(array of objects)*: List of attribute answers for the annotation.
+  - `name` *(string)*: Must match the `componentClass` defined in the project template's metadata for that question.
+  - `fieldType` *(string)*: The attribute input type (e.g., `"radio"`, `"dropdown"`, `"select"`, `"boolean"`, `"input"`, `"sentiment"`).
+  - `answer` *(list of strings)*: Selected option value(s) or input string (e.g., `["option_a"]` or `["text value"]`).
+  - `id` *(integer)*: Sequential ID index for the attribute in the array.
+
+<Note>
+**Option Validation**:
+For constrained attribute types (`radio`, `dropdown`, `select`, `boolean`), answer values are validated against the allowed options defined in the project metadata. Values not matching predefined options will be ignored. For `input` attributes, free-form text is accepted.
+</Note>
+
+### Sample COCO JSON Payload (`coco_with_attributes.json`)
+
+```json
+{
+    "images": [
+        {
+            "id": 1552111613,
+            "width": 1196,
+            "height": 576,
+            "file_name": "sample_image.png"
+        }
+    ],
+    "annotations": [
+        {
+            "id": 101,
+            "image_id": 1552111613,
+            "category_id": 1,
+            "bbox": [223, 161, 236, 177],
+            "area": 41772,
+            "iscrowd": 0,
+            "attributes": [
+                {
+                    "id": 0,
+                    "name": "attri1",
+                    "fieldType": "radio",
+                    "answer": ["a"]
+                },
+                {
+                    "id": 1,
+                    "name": "in",
+                    "fieldType": "input",
+                    "answer": ["Sample input text"]
+                }
+            ]
+        },
+        {
+            "id": 102,
+            "image_id": 1552111613,
+            "category_id": 0,
+            "bbox": [613, 179, 164, 135],
+            "area": 22140,
+            "iscrowd": 0,
+            "attributes": [
+                {
+                    "id": 0,
+                    "name": "at2",
+                    "fieldType": "dropdown",
+                    "answer": ["a1"]
+                }
+            ]
+        }
+    ],
+    "categories": [
+        {
+            "id": 0,
+            "name": "person1"
+        },
+        {
+            "id": 1,
+            "name": "person2"
+        }
+    ]
+}
+```
+
+### Python SDK Code Snippet
+
+```python
+import os
+from labellerr.client import LabellerrClient
+from labellerr.core.projects import LabellerrProject
+
+# Initialize the Labellerr SDK Client
+client = LabellerrClient(
+    api_key=os.getenv("LABELLERR_API_KEY"),
+    api_secret=os.getenv("LABELLERR_API_SECRET"),
+    client_id=os.getenv("LABELLERR_CLIENT_ID")
+)
+
+# Connect to your project
+project = LabellerrProject(
+    client=client, 
+    project_id="YOUR_PROJECT_ID"
+)
+
+# Upload pre-annotations including attributes
+response = project.upload_preannotations(
+    annotation_format="coco_json",
+    annotation_file="coco_with_attributes.json"
+)
+
+print("Pre-annotation Upload Submitted Successfully:")
+print(response)
+```
+
+
 ## Implementation
 
 The SDK provides a unified method with optional async behavior:
