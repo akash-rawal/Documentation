@@ -1,0 +1,51 @@
+---
+title: "Single Sign-On (SSO) Enforcement"
+description: "Enforce Single Sign-On (SSO) authentication for all members of your Labellerr workspace."
+icon: shield-check
+---
+
+## Overview
+
+Single Sign-On (SSO) Enforcement lets you enforce sign-in through a designated identity provider — **Google Workspace** or **Okta** — for all members of your workspace. Once enabled, every user must authenticate through the selected provider.
+
+<Info>
+Only users with **super admin** privileges can enable or disable SSO Enforcement for a workspace.
+</Info>
+
+## Enabling SSO Enforcement
+
+<Steps>
+  <Step title="Go to Workspace Settings">
+    Open the **Workspace Settings** option from the left sidebar.
+    <Frame>
+      <img src="https://storage.googleapis.com/labellerr-cdn/%200%20Documentation-Enterprise-grade-security/workspace-config-step-1.webp" alt="Workspace Settings in the left sidebar" />
+    </Frame>
+  </Step>
+
+  <Step title="Toggle On SSO Enforcement">
+    Toggle on **Single Sign-on (SSO) Enforcement**.
+    <Frame>
+      <img src="https://storage.googleapis.com/labellerr-cdn/%200%20Documentation-Enterprise-grade-security/sso-steps-2.webp" alt="Single Sign-on (SSO) Enforcement toggle" />
+    </Frame>
+  </Step>
+
+  <Step title="Select the SSO Identity Provider">
+    Check the box for the SSO identity provider you want to enforce: **Google Workspace** or **Okta**.
+  </Step>
+</Steps>
+
+## How It Works
+
+Once SSO Enforcement is enabled, all users must sign in through the designated identity provider. Users are forced to re-authenticate with the provider on login, and there is no alternative login path.
+
+<Warning>
+Keep your login credentials safe and remembered. After SSO Enforcement is enabled, a user can only log in using the designated provider.
+</Warning>
+
+## Disabling SSO
+
+Only a **super admin** can disable SSO Enforcement from the same **Workspace Settings** screen by toggling it off.
+
+<Note>
+For further assistance contact <a href="mailto:support@tensormatics.com">support@tensormatics.com</a>
+</Note>

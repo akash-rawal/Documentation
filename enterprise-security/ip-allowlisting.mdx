@@ -1,0 +1,53 @@
+---
+title: "IP Allowlisting"
+description: "Restrict access to your Labellerr workspace by allowing only specific IP addresses."
+icon: network-wired
+---
+
+## Overview
+
+IP Allowlisting restricts access to your Labellerr workspace to a set of allowed IP ranges. Once enabled, only users connecting from the listed IPs can access your data — such as images, videos, and annotations.
+
+<Info>
+Only users with **super admin** privileges can enable IP Allowlisting, add IP ranges, and remove them.
+</Info>
+
+## Enabling IP Allowlisting
+
+<Steps>
+  <Step title="Go to Workspace Settings">
+    Open the **Workspace Settings** option from the left sidebar.
+    <Frame>
+      <img src="https://storage.googleapis.com/labellerr-cdn/%200%20Documentation-Enterprise-grade-security/workspace-config-step-1.webp" alt="Workspace Settings in the left sidebar" />
+    </Frame>
+  </Step>
+
+  <Step title="Toggle On IP Allowlisting">
+    Toggle on **IP Range Allowlist**.
+    <Frame>
+      <img src="https://storage.googleapis.com/labellerr-cdn/%200%20Documentation-Enterprise-grade-security/ip-allowlist-step-2.webp" alt="IP Range Allowlist toggle" />
+    </Frame>
+  </Step>
+
+  <Step title="Add Allowed IP Ranges">
+    Enter the IP ranges in **CIDR notation**. Multiple IPs are supported, for example:
+    - `192.168.1.100/32` (IPv4)
+    - `2001:db8::/32` (IPv6)
+  </Step>
+
+  <Step title="Save">
+    Save your changes to apply the allowlist.
+  </Step>
+</Steps>
+
+## How It Works
+
+Once IP Allowlisting is enabled, only users connecting from the listed IP ranges can work in the tool — accessing data such as videos or images and performing annotations. Users connecting from unlisted IPs are blocked, including the **super admin** — after enabling the allowlist, even the super admin can only access the workspace from the listed IPs. Only a **super admin** can enable the allowlist, add IP ranges, and remove them.
+
+<Warning>
+Add your **current IP address** to the allowlist. If your own IP is not listed, you will also be locked out of the workspace.
+</Warning>
+
+<Note>
+For further assistance contact <a href="mailto:support@tensormatics.com">support@tensormatics.com</a>
+</Note>
