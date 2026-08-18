@@ -108,10 +108,10 @@
             ]
           },
           {
-            "group": "Feature Demos",
+            "group": "Features",
             "pages": [
               {
-                "group": "Feature Demos",
+                "group": "Product Features",
                 "pages": [
                   "features/audio-segmentation",
                   "features/audio-transcription",
@@ -144,16 +144,23 @@
             ]
           },
           {
+            "group": "Enterprise Grade Security Features",
+            "pages": [
+              "enterprise-security/sso-enforcement",
+              "enterprise-security/ip-allowlisting"
+            ]
+          },
+          {
             "group": "System Requirements",
             "pages": [
               "system-requirements/system-requirements"
             ]
           },
           {
-            "group": "Additional Features",
+            "group": "Product Guide",
             "pages": [
               {
-                "group": "Essential Features",
+                "group": "Workflow Guides",
                 "pages": [
                   "few-additional-features/few-additional-features-1/labellerr-workflow-diagram",
                   "few-additional-features/few-additional-features-1/reviewing-file-level-remarks-by-annotators-reviewers"
